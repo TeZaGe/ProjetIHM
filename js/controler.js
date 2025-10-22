@@ -1,8 +1,31 @@
-/**
- * Write here your update classes
- */
+class UpdateAddBook extends Observer{
 
+    constructor(view, model){
+        super();
+        this.view = view;
+        this.model = model;
+    }
 
+    update(observable, object) {
+        let books = observable.getBooks();
+        this.view.displayBooks(books);
+    }
+}
+
+class UpdateSearchBook extends Observer{
+
+  constructor(view, model){
+      super();
+      this.view = view;
+      this.model = model;
+  }
+
+    update(observable, object) {
+        let books = observable.getBooks();
+        this.view.displayBooks(books);
+    }
+}
+        
 class Display extends Observer{
 
   constructor(view){
@@ -10,66 +33,58 @@ class Display extends Observer{
       this.view = view;
   }
 
-  update(observable, Object) {
-      // get the data from the model
+  update(observable, object) {
       let books = observable.getBooks();
-      // display the books in the view
-      this.view.displayBooks(booksHTML);
+      this.view.displayBooks(books);
   }
 }
 
 
-/**
- * The controler' s job is to:
- * - instanciate the updates and actions
- * - link the updates to the model : the updates listen to the model
- * - link the actions to the view : the actions listen to the view's widgets
- *
- *
- *
- */
 class Controler {
 
   constructor(model){
+    this.view = new View();
+    this.model = model;
 
-      this.view = new View();
-      this.model = model;
-
-      this.originalBooks = this.model.getBooks();
-
-      this.Display = new Display(this.view);
-
-      this.model.addObservers(this.Display);
-
-      this.view.displayBooks(this.model.getBooks());
+    // Display Books
+    this.display = new Display(this.view);
+    this.model.addObservers(this.display);
+    this.view.displayBooks(this.model.getBooks());
       
-      // link the actions to the view's widgets
-      this.view.searchBar.querySelector('#search-button').addEventListener('click', (event) => {
-          let query = this.view.searchBar.querySelector('input').value.toLowerCase();
-          
-          // Correction: Filtre toujours à partir de la liste originale
-          let filteredBooks = this.originalBooks.filter(book => 
-              book.title.toLowerCase().includes(query) || 
-              book.author.toLowerCase().includes(query) || 
-              book.year.toString().includes(query)
-          );
-          
-          // Modifie le modèle, ce qui déclenchera l'update de Display
-          this.model.setBooks(filteredBooks);
-      });
+    // Search Books
+    this.updateSearchBook = new UpdateSearchBook(this.view, this.model);
+    this.model.addObservers(this.updateSearchBook);
+    
+    this.view.searchInput.addEventListener('input', (event) => {
+        const query = event.target.value;
+        this.model.searchBooks(query);
+    });
 
+    // Add Book
+    this.AddBook = new UpdateAddBook(this.view, this.model);
+    this.model.addObservers(this.AddBook);
 
+    // Display form Add Book
+    this.view.addButton.addEventListener('click', () => {
+        this.view.displayformAddBook();
+        
+        if (this.view.addBook) {
+            this.view.addBook.addEventListener('submit', (event) => {
+                event.preventDefault();
+                const title = this.view.addBook.querySelector('#title').value;
+                const author = this.view.addBook.querySelector('#author').value;
+                const year = parseInt(this.view.addBook.querySelector('#year').value);
+                this.model.addBook({ title, author, year });
+                this.view.formAddBookContainer.innerHTML = '';
+            });
+        }
 
-      // **** 1. update
-      // instanciate the updates
-
-      // link the updates to the model
-
-      // ****  2. action
-      // instanciate the actions
-      // let actionButton = (event) => { ... }
-
-      // link the actions to the view's widgets
+        if (this.view.cancelButton) {
+            this.view.cancelButton.addEventListener('click', () => {
+                this.view.formAddBookContainer.innerHTML = '';
+            });
+        }
+    });
   }
 }
-    
+
