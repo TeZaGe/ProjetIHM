@@ -49,6 +49,10 @@ class Model extends Observable {
         this.setBooks([...this.allBooks]);
     }
 
+    deleteBook(book) {
+        this.allBooks = this.allBooks.filter(b => b !== book);
+        this.setBooks([...this.allBooks]);
+    }
 
 
 }

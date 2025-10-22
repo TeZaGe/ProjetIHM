@@ -56,6 +56,7 @@ class View {
           </div>
         </div>
             `;
+    this.booksContainer = this.displayArea.querySelector('#books-container');
 
 
     // footer
@@ -141,12 +142,12 @@ class View {
         <div class="card h-100 shadow-sm" style="background-color: #C1856D;">
           <div class="card-body d-flex flex-column">
             <div>
-              <h5 class="card-title fs-4 mb-3">${book.title}</h5>
-              <h6 class="card-subtitle mb-3 text-muted fs-5">${book.author}</h6>
+              <h5 class="card-title fs-4 mb-3 title">${book.title}</h5>
+              <h6 class="card-subtitle mb-3 text-muted fs-5 author">${book.author}</h6>
             </div>
             <div class="d-flex justify-content-between align-items-center mt-auto">
-              <p class="card-text fs-6 mb-0">Année: ${book.year}</p>
-              <button class="btn btn-outline-secondary d-flex align-items-center px-3 ms-3" type="button" aria-label="Supprimer">
+              <p class="card-text fs-6 mb-0 year">Année: ${book.year}</p>
+              <button class="btn btn-outline-secondary d-flex align-items-center px-3 ms-3 delete-button" type="button" aria-label="Supprimer">
           <img src="img/poubelle.png" alt="Supprimer" class="img-fluid" style="width: 30px; height: 30px;">
               </button>
             </div>
@@ -154,6 +155,10 @@ class View {
         </div>
             `;
       container.appendChild(bookElement);
+      this.deleteButton = document.querySelector('#delete-button');
+      this.year = book.year;
+      this.title = book.title;
+      this.author = book.author;
     });
   }
 }

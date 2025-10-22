@@ -12,6 +12,21 @@ class UpdateAddBook extends Observer{
     }
 }
 
+class UpdateDeleteBook extends Observer{
+
+        constructor(view, model){
+        super();
+        this.view = view;
+        this.model = model;
+    }
+
+    update(observable, object) {
+        let books = observable.getBooks();
+        this.view.displayBooks(books);
+    }
+
+}
+
 class UpdateSearchBook extends Observer{
 
   constructor(view, model){
@@ -64,6 +79,9 @@ class Controler {
     this.AddBook = new UpdateAddBook(this.view, this.model);
     this.model.addObservers(this.AddBook);
 
+
+
+    
     // Display form Add Book
     this.view.addButton.addEventListener('click', () => {
         this.view.displayformAddBook();
@@ -85,6 +103,25 @@ class Controler {
             });
         }
     });
+
+    //Delete Book
+    this.deleteBook = new UpdateDeleteBook(this.view, this.model);
+    this.model.addObservers(this.deleteBook);
+
+    // Add event delegation for delete buttons
+    this.view.booksContainer.addEventListener('click', (event) => {
+                const title = this.view.title;
+                const author = this.view.author;
+                const year =  this.view.year;
+                
+                const bookToDelete = this.model.getBooks().find(book => 
+                    book.title === title && 
+                    book.author === author && 
+                    book.year === year
+                );
+                this.model.deleteBook(bookToDelete);
+  });
+
   }
 }
 
