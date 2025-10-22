@@ -3,7 +3,7 @@
  */
 
 
-class SearchBook extends Observer{
+class Display extends Observer{
 
   constructor(view){
       super();
@@ -13,8 +13,6 @@ class SearchBook extends Observer{
   update(observable, Object) {
       // get the data from the model
       let books = observable.getBooks();
-      // get the HTML from the model
-      let booksHTML = observable.generateBooksHTML();
       // display the books in the view
       this.view.displayBooks(booksHTML);
   }
@@ -37,21 +35,29 @@ class Controler {
       this.view = new View();
       this.model = model;
 
-      this.searchBook = new SearchBook(this.view);
-      this.searchBook.observe(this.model);
+      this.originalBooks = this.model.getBooks();
 
-      // Display initial books
-      this.view.displayBooks(this.model.generateBooksHTML());
+      this.Display = new Display(this.view);
+
+      this.model.addObservers(this.Display);
+
+      this.view.displayBooks(this.model.getBooks());
       
+      // link the actions to the view's widgets
       this.view.searchBar.querySelector('#search-button').addEventListener('click', (event) => {
           let query = this.view.searchBar.querySelector('input').value.toLowerCase();
-          let filteredBooks = this.model.books.filter(book => 
+          
+          // Correction: Filtre toujours à partir de la liste originale
+          let filteredBooks = this.originalBooks.filter(book => 
               book.title.toLowerCase().includes(query) || 
               book.author.toLowerCase().includes(query) || 
               book.year.toString().includes(query)
           );
-          this.model.setBooks(filteredBooks); // This will trigger the update
+          
+          // Modifie le modèle, ce qui déclenchera l'update de Display
+          this.model.setBooks(filteredBooks);
       });
+
 
 
       // **** 1. update

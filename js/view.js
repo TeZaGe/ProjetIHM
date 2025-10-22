@@ -8,6 +8,8 @@ class View {
 
   constructor(){
 
+
+    // header
     this.header = document.querySelector('header');
     this.header.innerHTML = `
       <div class="container-fluid py-3">
@@ -24,6 +26,8 @@ class View {
       </div>
 `;
 
+
+    //search-bar
     this.searchBar = document.querySelector('.search-bar');
     this.searchBar.innerHTML = `
       <div class="container my-4">
@@ -35,16 +39,10 @@ class View {
 `;
 
 
-    this.displayArea = document.querySelector('.display-area');
-      this.displayArea.innerHTML = `
-      <div class="container">
-        <div class="row" id="books-container">
-        </div>
-      </div>
-`;
-
       
 
+
+    // footer
     this.footer = document.querySelector('footer');
     this.footer.innerHTML = `
       <div class="container-fluid">
@@ -72,5 +70,35 @@ class View {
       </div>
 `;
   }
+
+
+
+  displayBooks(books) {
+    const container = document.querySelector('#books-container');
+    container.innerHTML = ''; 
+
+    if (books.length === 0) {
+      container.innerHTML = '<p class="text-center">Aucun livre trouvé.</p>';
+      return;
+    }
+
+    books.forEach(book => {
+
+      const bookElement = document.createElement('div');
+      bookElement.className = 'col-md-4 mb-3';
+      bookElement.innerHTML = `
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">${book.title}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">${book.author}</h6>
+            <p class="card-text">Année: ${book.year}</p>
+          </div>
+        </div>
+      `;
+      container.appendChild(bookElement);
+    });
+  }
 }
+
+
 
